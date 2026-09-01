@@ -7,6 +7,7 @@ import { LEARNING_ITEM_TYPES, LEARNING_STATUSES } from "@/app/lib/models";
 
 export function ItemForm({
   initialValues,
+  onSubmitted,
 }: {
   initialValues?: {
     id?: string;
@@ -16,6 +17,7 @@ export function ItemForm({
     description?: string;
     targetDate?: string;
   };
+  onSubmitted?: () => void;
 }) {
   const [title, setTitle] = useState(initialValues?.title ?? "");
   const [type, setType] = useState(initialValues?.type ?? "Course");
@@ -32,6 +34,7 @@ export function ItemForm({
 
     if (isEditing) {
       await updateItem(formData);
+      onSubmitted?.();
       return;
     }
 
@@ -41,6 +44,7 @@ export function ItemForm({
     setTargetDate("");
     setType("Course");
     setStatus("Not started");
+    onSubmitted?.();
   };
 
   return (

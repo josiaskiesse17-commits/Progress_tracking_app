@@ -122,12 +122,18 @@ export type CreateReminderInput = {
   notes?: string;
 };
 
+function toPlainObject<T extends object>(value: T): T {
+  return { ...value };
+}
+
 export function listLearningItems(): LearningItem[] {
-  return db
+  const rows = db
     .prepare(
       "SELECT * FROM learning_items WHERE userId = ? ORDER BY updatedAt DESC",
     )
     .all(defaultUserId) as LearningItem[];
+
+  return rows.map((row) => toPlainObject(row));
 }
 
 export function getLearningItemById(id: string): LearningItem | null {
@@ -135,7 +141,7 @@ export function getLearningItemById(id: string): LearningItem | null {
     .prepare("SELECT * FROM learning_items WHERE id = ?")
     .get(id) as LearningItem | undefined;
 
-  return item ?? null;
+  return item ? toPlainObject(item) : null;
 }
 
 export function createLearningItem(
@@ -170,9 +176,9 @@ export function createLearningItem(
     now,
   );
 
-  return db
-    .prepare("SELECT * FROM learning_items WHERE id = ?")
-    .get(id) as LearningItem;
+  return toPlainObject(
+    db.prepare("SELECT * FROM learning_items WHERE id = ?").get(id) as LearningItem,
+  );
 }
 
 export function updateLearningItem(
@@ -211,9 +217,9 @@ export function updateLearningItem(
     id,
   );
 
-  return db
-    .prepare("SELECT * FROM learning_items WHERE id = ?")
-    .get(id) as LearningItem;
+  return toPlainObject(
+    db.prepare("SELECT * FROM learning_items WHERE id = ?").get(id) as LearningItem,
+  );
 }
 
 export function deleteLearningItem(id: string): boolean {
@@ -222,11 +228,16 @@ export function deleteLearningItem(id: string): boolean {
 }
 
 export function listStudySessions(): StudySession[] {
-  return db
+  const rows = db
     .prepare(
       "SELECT * FROM study_sessions WHERE userId = ? ORDER BY scheduledDate DESC",
     )
     .all(defaultUserId) as StudySession[];
+
+  return rows.map((row) => ({
+    ...toPlainObject(row),
+    completed: Boolean(row.completed),
+  }));
 }
 
 export function createStudySession(
@@ -259,17 +270,25 @@ export function createStudySession(
     now,
   );
 
-  return db
+  const row = db
     .prepare("SELECT * FROM study_sessions WHERE id = ?")
-    .get(id) as StudySession;
+    .get(id) as StudySession | undefined;
+
+  if (!row) {
+    throw new Error(`Study session not found: ${id}`);
+  }
+
+  return { ...toPlainObject(row), completed: Boolean(row.completed) };
 }
 
 export function listReminders(): Reminder[] {
-  return db
+  const rows = db
     .prepare(
       "SELECT * FROM reminders WHERE userId = ? ORDER BY reminderDate ASC",
     )
     .all(defaultUserId) as Reminder[];
+
+  return rows.map((row) => toPlainObject(row));
 }
 
 export function createReminder(input: CreateReminderInput): Reminder {
@@ -300,7 +319,9 @@ export function createReminder(input: CreateReminderInput): Reminder {
     now,
   );
 
-  return db.prepare("SELECT * FROM reminders WHERE id = ?").get(id) as Reminder;
+  return toPlainObject(
+    db.prepare("SELECT * FROM reminders WHERE id = ?").get(id) as Reminder,
+  );
 }
 
 function ensureSeedData() {

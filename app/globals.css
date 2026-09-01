@@ -5,13 +5,14 @@
   --surface: #ffffff;
   --surface-soft: #f8fafc;
   --surface-strong: #e2e8f0;
-  --border: #e2e8f0;
+  --border: #dbe3ee;
   --foreground: #0f172a;
   --muted: #475569;
   --button: #0f172a;
   --button-text: #ffffff;
   --input: #f8fafc;
   --shadow: rgba(15, 23, 42, 0.08);
+  --subtle: rgba(15, 23, 42, 0.04);
 }
 
 html[data-theme="dark"] {
@@ -19,13 +20,14 @@ html[data-theme="dark"] {
   --surface: #0f172a;
   --surface-soft: #111827;
   --surface-strong: #1e293b;
-  --border: #334155;
-  --foreground: #e2e8f0;
-  --muted: #94a3b8;
-  --button: #f8fafc;
-  --button-text: #020817;
+  --border: #243041;
+  --foreground: #e5edf8;
+  --muted: #a8b4c7;
+  --button: #e2e8f0;
+  --button-text: #0f172a;
   --input: #0b1220;
-  --shadow: rgba(15, 23, 42, 0.5);
+  --shadow: rgba(2, 8, 23, 0.7);
+  --subtle: rgba(148, 163, 184, 0.07);
 }
 
 @theme inline {
